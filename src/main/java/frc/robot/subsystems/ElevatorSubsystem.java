@@ -30,7 +30,7 @@ public class ElevatorSubsystem extends Subsystem {
     private final RelativeEncoder m_elevatorEncoderLeft; // TODO: Not sure if it is relative or absolute
 
     private static ElevatorSubsystem m_instance;
-    private static ElevatorSubsystem getInstance() {
+    public static ElevatorSubsystem getInstance() {
         if (m_instance == null)
             m_instance = new ElevatorSubsystem();
         
