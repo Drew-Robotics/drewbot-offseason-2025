@@ -1,11 +1,10 @@
-package frc.robot.subsystems.drive.driveOutput;
+package frc.robot.subsystems.drive.drivecomponents;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public class TurnMotor extends SparkMax {
     public final int m_CANID;
@@ -24,12 +23,12 @@ public class TurnMotor extends SparkMax {
         m_closedLoop = this.getClosedLoopController();
     }
 
-    public void setAngle(Angle angle) {
-        m_closedLoop.setReference(angle.in(Units.Radians), ControlType.kPosition);
+    public void setAngle(Rotation2d angle) {
+        m_closedLoop.setReference(angle.getRadians(), ControlType.kPosition);
     }
 
-    public Angle getAngle() {
-        return Units.Radians.of(m_encoder.getPosition());
+    public Rotation2d getAngle() {
+        return Rotation2d.fromRadians(m_encoder.getPosition());
     }
 }
 

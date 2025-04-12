@@ -1,9 +1,5 @@
-package frc.robot.subsystems.drive.driveOutput;
+package frc.robot.subsystems.drive.drivecomponents;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -11,6 +7,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.constants.DriveConstants;
 
@@ -33,18 +30,36 @@ public class DriveMotor extends SparkFlex {
         SparkFlexConfig configuration = new SparkFlexConfig();
     }
 
+    // SETTERS
+
     public void setLinearVelocity(LinearVelocity linearVel) {
         setAngularVelocity(
             Units.RadiansPerSecond.of(
                 linearVel.in(Units.MetersPerSecond) * 
-                    (1 / DriveConstants.WheelConstants.wheelRadius.in(Units.Meters))
+                    (1 / DriveConstants.WheelConstants.kWheelRadius.in(Units.Meters))
             )
         );
     }
 
     public void setAngularVelocity(AngularVelocity angularVel) {
-        this.closedLoopController.setReference(
+        m_closedLoop.setReference(
             angularVel.in(Units.RadiansPerSecond), ControlType.kVelocity
         );
+    }
+
+    // GETTERS
+
+    public LinearVelocity getLinearVelocity() {
+        return Units.MetersPerSecond.of(
+            m_encoder.getVelocity() * DriveConstants.WheelConstants.kWheelRadius.in(Units.Meters)
+        );
+    }
+
+    public AngularVelocity getAngularVelocity() {
+        return Units.RadiansPerSecond.of(m_encoder.getVelocity());
+    }
+
+    public Distance getDistance() {
+        return Units.Meters.of(m_encoder.getPosition());
     }
 }
