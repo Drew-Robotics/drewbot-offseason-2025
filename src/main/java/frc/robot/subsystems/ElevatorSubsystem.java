@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends Subsystem {
 
     private final SparkClosedLoopController m_elevatorClosedLoop;
 
-    private final RelativeEncoder m_elevatorEncoderLeft; // TODO: Not sure if it is relative or absolute
+    private final RelativeEncoder m_elevatorEncoderLeft;
 
     private static ElevatorSubsystem m_instance;
     public static ElevatorSubsystem getInstance() {
@@ -79,7 +79,7 @@ public class ElevatorSubsystem extends Subsystem {
         return MetersPerSecond.of(m_elevatorEncoderLeft.getVelocity());
     }
 
-    /* OVERRIDES */
+    // OVERRIDES
 
     // Logging
 
