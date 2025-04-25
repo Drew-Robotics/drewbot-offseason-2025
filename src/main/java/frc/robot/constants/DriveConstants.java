@@ -4,32 +4,35 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.motorconfigs.closedloop.PID;
+import frc.robot.motorconfigs.encoder.ConversionFactors;
 
 public class DriveConstants {
-    public static final class CANIDs {
-        public static final class DriveMotorCANIDs {
-            public static final int frontLeft = 0;
-            public static final int frontRight = 0;
+    public static final class kCANIDs {
+        public static final class kDriveMotorCANIDs {
+            public static final int kFrontLeft = 0;
+            public static final int kFrontRight = 0;
 
-            public static final int backLeft = 0;
-            public static final int backRight = 0;
+            public static final int kBackLeft = 0;
+            public static final int kBackRight = 0;
         }
 
-        public static final class TurnMotorCANIDs {
-            public static final int frontLeft = 0;
-            public static final int frontRight = 0;
+        public static final class kTurnMotorCANIDs {
+            public static final int kFrontLeft = 0;
+            public static final int kFrontRight = 0;
             
-            public static final int backLeft = 0;
-            public static final int backRight = 0;
+            public static final int kBackLeft = 0;
+            public static final int kBackRight = 0;
         }
     }
 
-    public static final class WheelConstants {
+    public static final class kWheelConstants {
         public static final Distance kWheelRadius = Units.Meters.of(1);
 
-        public static final class WheelOffsetConstants {
+        public static final class kWheelOffsetConstants {
             public static final Translation2d kFrontLeftOffset = 
                 new Translation2d(0, 0);
             public static final Translation2d kFrontRightOffset =
@@ -41,8 +44,64 @@ public class DriveConstants {
         }
     }
 
-    public static final NavXComType gyroComType = NavXComType.kUSB1;
+    public static final class kCurrentLimits {
+        public static final Current kDriveMotorCurrentLimit = Units.Amps.of(40);
+        public static final Current kTurnMotorCurrentLimit = Units.Amps.of(20);
+    }
 
-    public static final LinearVelocity driveScalar = Units.MetersPerSecond.of(1);
-    public static final double driveRotationScalar = 0.5;
+    public static final class kConversionFactors {
+        public static final class DriveMotorConversions {
+            public static final int kDrivingMotorPinionTeeth = 14;
+
+            public static final double kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60.0;
+            public static final double kWheelDiameterMeters = 0;
+            public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
+
+            public static final double kDrivingMotorReduction = (45.0 * 22.0) / (kDrivingMotorPinionTeeth * 15.0);
+            public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
+                / kDrivingMotorReduction;
+
+            public static final double kPositionConversionFactor = kDrivingMotorReduction * kWheelCircumferenceMeters;
+            public static final double kVelocityConversionFactor = kPositionConversionFactor / 60.0;
+
+            public static final ConversionFactors kConversionFactors = 
+                new ConversionFactors(kPositionConversionFactor, kVelocityConversionFactor);
+        }
+
+        public static final class TurnMotorConversions {
+            public static final double kPositionConversionFactor = 2 * Math.PI;
+            public static final double kVelocityConversionFactor = kPositionConversionFactor / 60.0;
+
+            public static final ConversionFactors kConversionFactors = 
+                new ConversionFactors(kPositionConversionFactor, kVelocityConversionFactor);
+        }
+    }
+
+    public static final class kPID {
+        public static final class DriveMotorPID {
+            public static final double kP = 0.04;
+            public static final double kI = 0;
+            public static final double kD = 0;
+
+            public static final PID kPID = new PID(kP, kI, kD);
+        }
+
+        public static final class TurnMotorPID {
+            public static final double kP = 1;
+            public static final double kI = 0;
+            public static final double kD = 0;
+
+            public static final PID kPID = new PID(kP, kI, kD);
+        }
+    }
+
+    public static final NavXComType kGyroComType = NavXComType.kUSB1;
+
+    public static final LinearVelocity kDriveScalar = Units.MetersPerSecond.of(1);
+    public static final double kDriveRotationScalar = 0.5;
+
+    public static final double kFreeSpeedRpm = 5676;
+    public static final double kDrivingVelocityFeedForward = 1.0 / kFreeSpeedRpm;
+
+
 }

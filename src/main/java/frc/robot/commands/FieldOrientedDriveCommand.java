@@ -26,12 +26,12 @@ public class FieldOrientedDriveCommand extends Command {
     }
 
     private void fieldOrientedDrive() {
-        double driveScalar = DriveConstants.driveScalar.in(Units.MetersPerSecond);
+        double driveScalar = DriveConstants.kDriveScalar.in(Units.MetersPerSecond);
 
         double xVel = m_xVel.getAsDouble() * driveScalar;
         double yVel = m_yVel.getAsDouble() * driveScalar;
         double rotVel = 
-            m_rotVel.getAsDouble() * Math.PI * 2 * DriveConstants.driveRotationScalar; // full rotation * scalar
+            m_rotVel.getAsDouble() * Math.PI * 2 * DriveConstants.kDriveRotationScalar; // full rotation * scalar
 
         subsystems.driveSubsystem.fieldOrientedDrive(xVel, yVel, rotVel);
     }

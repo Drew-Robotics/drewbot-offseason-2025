@@ -7,7 +7,7 @@ import frc.robot.constants.DriveConstants;
 
 public class Gyroscope extends AHRS {
     public Gyroscope() {
-        super(DriveConstants.gyroComType);
+        super(DriveConstants.kGyroComType);
     }
 
     public Rotation2d getRotation2dYaw() {

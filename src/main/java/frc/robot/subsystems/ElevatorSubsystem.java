@@ -63,8 +63,8 @@ public class ElevatorSubsystem extends Subsystem {
             .apply(MotorConfigTools.mkMotorConfig(IdleMode.kCoast, ElevatorConstants.kCurrentLimit))
             .follow(m_elevatorMotorLeft); // FOLLOWS LEFT MOTOR
 
-        m_elevatorMotorLeft.configure(m_elevatorMotorConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_elevatorMotorRight.configure(m_elevatorMotorConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        MotorConfigTools.configureMotor(m_elevatorMotorConfigLeft, m_elevatorMotorLeft);
+        MotorConfigTools.configureMotor(m_elevatorMotorConfigRight, m_elevatorMotorRight);
     }
 
     public void setPosition(Distance position) {

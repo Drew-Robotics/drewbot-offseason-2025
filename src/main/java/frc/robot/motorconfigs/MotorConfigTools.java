@@ -1,8 +1,9 @@
 package frc.robot.motorconfigs;
 
-import java.util.stream.Stream;
-
 import com.revrobotics.config.BaseConfig;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
@@ -57,5 +58,11 @@ public class MotorConfigTools {
                 .feedbackSensor(feedbackSensor)
                 .pid(pid.getP(), pid.getI(), pid.getD())
                 .outputRange(outputRange.getMin(), outputRange.getMax());
+    }
+
+    // OTHER
+
+    public static void configureMotor(SparkBaseConfig config, SparkBase motor) {
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 }
