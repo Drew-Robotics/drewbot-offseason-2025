@@ -43,11 +43,11 @@ public class MotorConfigTools {
     }
 
     public static EncoderConfig mkEncoderConfig(ConversionFactors conversions) {
-        return mkEncoderConfig(conversions);
+        return mkEncoderConversions(conversions);
     }
 
-    public static EncoderConfig mkAbsoluteEncoderConfig(ConversionFactors conversions) {
-        return mkAbsoluteEncoderConfig(conversions);
+    public static AbsoluteEncoderConfig mkAbsoluteEncoderConfig(ConversionFactors conversions) {
+        return mkAbsoluteEncoderConversions(conversions);
     }
 
     // CLOSED LOOP
