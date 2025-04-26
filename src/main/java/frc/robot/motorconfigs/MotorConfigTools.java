@@ -1,7 +1,6 @@
 package frc.robot.motorconfigs;
 
 import com.revrobotics.config.BaseConfig;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -11,6 +10,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
@@ -64,11 +64,11 @@ public class MotorConfigTools {
 
     // OTHER
 
-    public static void configureMotor(SparkBaseConfig config, SparkMax motor) {
+    public static void configureMotor(SparkMaxConfig config, SparkMax motor) {
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public static void configureMotor(SparkBaseConfig config, SparkFlex motor) {
+    public static void configureMotor(SparkFlexConfig config, SparkFlex motor) {
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 }
