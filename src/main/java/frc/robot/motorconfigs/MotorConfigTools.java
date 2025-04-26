@@ -4,6 +4,8 @@ import com.revrobotics.config.BaseConfig;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.EncoderConfig;
@@ -62,7 +64,11 @@ public class MotorConfigTools {
 
     // OTHER
 
-    public static void configureMotor(SparkBaseConfig config, SparkBase motor) {
+    public static void configureMotor(SparkBaseConfig config, SparkMax motor) {
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    public static void configureMotor(SparkBaseConfig config, SparkFlex motor) {
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 }
