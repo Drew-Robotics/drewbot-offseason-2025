@@ -7,8 +7,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.motorconfigs.closedloop.PID;
-import frc.robot.motorconfigs.encoder.ConversionFactors;
 
 public class DriveConstants {
     public static final class kCANIDs {
@@ -63,17 +61,11 @@ public class DriveConstants {
 
             public static final double kPositionConversionFactor = kDrivingMotorReduction * kWheelCircumferenceMeters;
             public static final double kVelocityConversionFactor = kPositionConversionFactor / 60.0;
-
-            public static final ConversionFactors kConversionFactors = 
-                new ConversionFactors(kPositionConversionFactor, kVelocityConversionFactor);
         }
 
         public static final class TurnMotorConversions {
             public static final double kPositionConversionFactor = 2 * Math.PI;
             public static final double kVelocityConversionFactor = kPositionConversionFactor / 60.0;
-
-            public static final ConversionFactors kConversionFactors = 
-                new ConversionFactors(kPositionConversionFactor, kVelocityConversionFactor);
         }
     }
 
@@ -82,16 +74,12 @@ public class DriveConstants {
             public static final double kP = 0.04;
             public static final double kI = 0;
             public static final double kD = 0;
-
-            public static final PID kPID = new PID(kP, kI, kD);
         }
 
         public static final class TurnMotorPID {
             public static final double kP = 1;
             public static final double kI = 0;
             public static final double kD = 0;
-
-            public static final PID kPID = new PID(kP, kI, kD);
         }
     }
 

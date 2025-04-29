@@ -4,9 +4,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.motorconfigs.closedloop.OutputRange;
-import frc.robot.motorconfigs.closedloop.PIDF;
-import frc.robot.motorconfigs.encoder.ConversionFactors;
 
 public class ElevatorConstants {
     public static final class CANIDs {
@@ -20,11 +17,6 @@ public class ElevatorConstants {
                 * (kMaxHeight.in(Units.Meters) - kMinHeight.in(Units.Meters)) + kMinHeight.in(Units.Meters)
         );
         public static final LinearVelocity kElevatorVelocityConversion = kElevatorPositionConversion.per(Units.Second);
-
-        public static final ConversionFactors kConversions = new ConversionFactors(
-            kElevatorPositionConversion.in(Units.Meters), 
-            kElevatorVelocityConversion.in(Units.MetersPerSecond)
-        );
     }
 
     public static final class ClosedLoop {
@@ -32,10 +24,6 @@ public class ElevatorConstants {
         public static final int kI = 0;
         public static final int kD = 0;
         public static final int kFF = 0;
-        
-        public static final PIDF kPID = new PIDF(kP, kI, kD, kFF);
-
-        public static final OutputRange outputRange = new OutputRange(0, 0);
     }
 
     public static final double kMinRotations = 0;

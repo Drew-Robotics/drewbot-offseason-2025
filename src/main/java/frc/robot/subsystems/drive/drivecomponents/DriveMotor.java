@@ -1,53 +1,61 @@
 package frc.robot.subsystems.drive.drivecomponents;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.constants.DriveConstants;
-import frc.robot.motorconfigs.MotorConfigTools;
-import frc.robot.motorconfigs.closedloop.OutputRange;
+import frc.robot.constants.DriveConstants.kConversionFactors.DriveMotorConversions;
+import frc.robot.constants.DriveConstants.kPID.DriveMotorPID;
 
-public class DriveMotor extends SparkFlex {
+public class DriveMotor {
     public final int m_CANID;
     public final String m_name;
 
+    public final SparkFlex m_motorController;
     public final RelativeEncoder m_encoder;
     public final SparkClosedLoopController m_closedLoop;
 
     public DriveMotor(String name, int CANID) {
-        super(CANID, MotorType.kBrushless);
 
+        m_motorController = new SparkFlex(CANID, MotorType.kBrushless);
         m_CANID = CANID;
         m_name = name;
 
-        m_encoder = this.getEncoder();
-        m_closedLoop = this.getClosedLoopController();
+        m_encoder = m_motorController.getEncoder();
+        m_closedLoop = m_motorController.getClosedLoopController();
 
         SparkFlexConfig configuration = new SparkFlexConfig();
 
         configuration
-            .apply(MotorConfigTools.mkMotorConfig(IdleMode.kBrake, DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit))
-            .apply(
-                MotorConfigTools.mkClosedLoopConfig(
-                    FeedbackSensor.kPrimaryEncoder, 
-                    DriveConstants.kPID.DriveMotorPID.kPID, 
-                    new OutputRange(-1, 1)
-                ).velocityFF(DriveConstants.kDrivingVelocityFeedForward)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
+        configuration.encoder
+            .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor)
+            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor)
+            .inverted(true);
+        configuration.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(
+                DriveMotorPID.kP, 
+                DriveMotorPID.kI, 
+                DriveMotorPID.kD
             )
-            .apply(
-                MotorConfigTools.mkEncoderConfig(DriveConstants.kConversionFactors.DriveMotorConversions.kConversionFactors)
-                    .inverted(true)
-            );
+            .outputRange(-1, 1)
+            .velocityFF(DriveConstants.kDrivingVelocityFeedForward);
         
-        MotorConfigTools.configureMotor(configuration, this);
+        m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     // SETTERS

@@ -19,7 +19,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.motorconfigs.MotorConfigTools;
+import frc.robot.constants.ElevatorConstants.ConversionFactor;
 
 public class ElevatorSubsystem extends Subsystem {
     private final SparkMax m_elevatorMotorLeft;
@@ -51,20 +51,28 @@ public class ElevatorSubsystem extends Subsystem {
         m_elevatorEncoderLeft = m_elevatorMotorLeft.getEncoder();
 
         m_elevatorMotorConfigLeft
-            .apply(MotorConfigTools.mkMotorConfig(IdleMode.kCoast, ElevatorConstants.kCurrentLimit))
-            .apply(MotorConfigTools.mkEncoderConfig(ElevatorConstants.ConversionFactor.kConversions)) 
-            .apply(MotorConfigTools.mkClosedLoopConfig(
-                FeedbackSensor.kPrimaryEncoder, 
-                ElevatorConstants.ClosedLoop.kPID, 
-                ElevatorConstants.ClosedLoop.outputRange
-            ));
+            .idleMode(IdleMode.kCoast)
+            .smartCurrentLimit((int) ElevatorConstants.kCurrentLimit.in(Units.Amps));
+        m_elevatorMotorConfigLeft.encoder
+            .positionConversionFactor(ConversionFactor.kElevatorPositionConversion.in(Units.Meters))
+            .velocityConversionFactor(ConversionFactor.kElevatorVelocityConversion.in(Units.MetersPerSecond));
+        m_elevatorMotorConfigLeft.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pidf(
+                ElevatorConstants.ClosedLoop.kP, 
+                ElevatorConstants.ClosedLoop.kI, 
+                ElevatorConstants.ClosedLoop.kD, 
+                ElevatorConstants.ClosedLoop.kFF
+            )
+            .outputRange(-1, 1);
 
         m_elevatorMotorConfigRight
-            .apply(MotorConfigTools.mkMotorConfig(IdleMode.kCoast, ElevatorConstants.kCurrentLimit))
+            .idleMode(IdleMode.kCoast)
+            .smartCurrentLimit((int) ElevatorConstants.kCurrentLimit.in(Units.Amps))
             .follow(m_elevatorMotorLeft); // FOLLOWS LEFT MOTOR
 
-        MotorConfigTools.configureMotor(m_elevatorMotorConfigLeft, m_elevatorMotorLeft);
-        MotorConfigTools.configureMotor(m_elevatorMotorConfigRight, m_elevatorMotorRight);
+        m_elevatorMotorLeft.configure(m_elevatorMotorConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_elevatorMotorRight.configure(m_elevatorMotorConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setPosition(Distance position) {
