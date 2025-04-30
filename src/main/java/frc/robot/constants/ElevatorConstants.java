@@ -7,8 +7,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 
 public class ElevatorConstants {
     public static final class CANIDs {
-        public static final int kLeft = 0;
-        public static final int kRight = 0;
+        public static final int kLeft = 10;
+        public static final int kRight = 11;
     }
 
     public static final class ConversionFactor {

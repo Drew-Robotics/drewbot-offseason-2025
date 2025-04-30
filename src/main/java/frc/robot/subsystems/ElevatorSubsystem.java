@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.ElevatorConstants.ConversionFactor;
 
+/*
 public class ElevatorSubsystem extends Subsystem {
     private final SparkMax m_elevatorMotorLeft;
     private final SparkMax m_elevatorMotorRight; // Follows Left Motor
@@ -98,3 +99,4 @@ public class ElevatorSubsystem extends Subsystem {
         SmartDashboard.putNumber("Elevator Velocity (mps)", getVelocity().in(Units.MetersPerSecond));
     }
 }
+    */

@@ -29,6 +29,9 @@ public class SwerveModule {
         m_driveMotor.setLinearVelocity(
             Units.MetersPerSecond.of(moduleState.speedMetersPerSecond)
         );
+
+        System.out.println("Module Position Angle" + m_turnMotor.getAngle());
+        System.out.println("Module Position Linear Velocity" + moduleState.speedMetersPerSecond);
     }
 
     public SwerveModulePosition getModulePosition() {

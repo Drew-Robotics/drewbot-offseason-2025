@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive.drivecomponents;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -15,6 +17,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.DriveConstants.kConversionFactors.DriveMotorConversions;
 import frc.robot.constants.DriveConstants.kPID.DriveMotorPID;
@@ -43,8 +46,7 @@ public class DriveMotor {
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
         configuration.encoder
             .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor)
-            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor)
-            .inverted(true);
+            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor);
         configuration.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(
@@ -61,6 +63,8 @@ public class DriveMotor {
     // SETTERS
 
     public void setLinearVelocity(LinearVelocity linearVel) {
+        SmartDashboard.putNumber(m_name + ": Linear Velocity", linearVel.in(Units.MetersPerSecond));
+
         setAngularVelocity(
             Units.RadiansPerSecond.of(
                 linearVel.in(Units.MetersPerSecond) * 
@@ -70,6 +74,8 @@ public class DriveMotor {
     }
 
     public void setAngularVelocity(AngularVelocity angularVel) {
+        SmartDashboard.putNumber(m_name + ": Angular Velocity", angularVel.in(RadiansPerSecond));
+
         m_closedLoop.setReference(
             angularVel.in(Units.RadiansPerSecond), ControlType.kVelocity
         );

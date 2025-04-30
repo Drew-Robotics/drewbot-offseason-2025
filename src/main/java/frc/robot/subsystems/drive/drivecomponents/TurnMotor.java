@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.DriveConstants.kConversionFactors.TurnMotorConversions;
 import frc.robot.constants.DriveConstants.kPID.TurnMotorPID;
@@ -38,8 +39,7 @@ public class TurnMotor {
 
         configuration
             .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps))
-            .inverted(true);
+            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps));
         configuration.encoder
             .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor)
             .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor);
@@ -61,6 +61,8 @@ public class TurnMotor {
     }
 
     public void setAngle(Rotation2d angle) {
+        SmartDashboard.putNumber(m_name + ": Set Angle", angle.getDegrees());
+
         m_closedLoop.setReference(angle.getRadians(), ControlType.kPosition);
     }
 

@@ -6,10 +6,8 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.subsystems;
-import frc.robot.constants.DriveConstants;
 
 
 public class FieldOrientedDriveCommand extends Command {
@@ -26,12 +24,10 @@ public class FieldOrientedDriveCommand extends Command {
     }
 
     private void fieldOrientedDrive() {
-        double driveScalar = DriveConstants.kDriveScalar.in(Units.MetersPerSecond);
-
-        double xVel = m_xVel.getAsDouble() * driveScalar;
-        double yVel = m_yVel.getAsDouble() * driveScalar;
+        double xVel = m_xVel.getAsDouble();
+        double yVel = m_yVel.getAsDouble();
         double rotVel = 
-            m_rotVel.getAsDouble() * Math.PI * 2 * DriveConstants.kDriveRotationScalar; // full rotation * scalar
+            m_rotVel.getAsDouble() * Math.PI * 2; // full rotation * scalar
 
         subsystems.driveSubsystem.fieldOrientedDrive(xVel, yVel, rotVel);
     }

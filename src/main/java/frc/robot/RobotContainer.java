@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.controller.DriverController;
-import frc.robot.subsystems.ElevatorSubsystem;
+// import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 public class RobotContainer {
@@ -21,7 +21,7 @@ public class RobotContainer {
 
     public static final class subsystems {
         public static final DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
-        public static final ElevatorSubsystem elevatorSubsystem = ElevatorSubsystem.getInstance();
+        // public static final ElevatorSubsystem elevatorSubsystem = ElevatorSubsystem.getInstance();
     }
 
     private void configureBindings() {

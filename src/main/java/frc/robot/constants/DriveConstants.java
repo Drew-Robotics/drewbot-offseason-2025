@@ -28,7 +28,7 @@ public class DriveConstants {
     }
 
     public static final class kWheelConstants {
-        public static final Distance kWheelRadius = Units.Meters.of(1);
+        public static final Distance kWheelRadius = Units.Inches.of(3);
 
         public static final class kWheelOffsetConstants {
             public static final Translation2d kFrontLeftOffset = 
@@ -71,22 +71,19 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0.04;
+            public static final double kP = 0.2;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         public static final class TurnMotorPID {
-            public static final double kP = 1;
+            public static final double kP = 0.16;
             public static final double kI = 0;
             public static final double kD = 0;
         }
     }
 
     public static final NavXComType kGyroComType = NavXComType.kUSB1;
-
-    public static final LinearVelocity kDriveScalar = Units.MetersPerSecond.of(1);
-    public static final double kDriveRotationScalar = 0.5;
 
     public static final double kFreeSpeedRpm = 5676;
     public static final double kDrivingVelocityFeedForward = 1.0 / kFreeSpeedRpm;
