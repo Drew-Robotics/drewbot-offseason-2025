@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 
 public class DriveConstants {
     public static final class kCANIDs {
@@ -21,6 +20,7 @@ public class DriveConstants {
         public static final class kTurnMotorCANIDs {
             public static final int kFrontLeft = 6;
             public static final int kFrontRight = 8;
+
             
             public static final int kBackLeft = 4;
             public static final int kBackRight = 2;
@@ -52,7 +52,7 @@ public class DriveConstants {
             public static final int kDrivingMotorPinionTeeth = 14;
 
             public static final double kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60.0;
-            public static final Distance kWheelDiameter = Units.Inches.of(2.82);
+            public static final Distance kWheelDiameter = kWheelConstants.kWheelRadius.times(2);
             public static final double kWheelCircumferenceMeters = kWheelDiameter.in(Units.Meters) * Math.PI;
 
             public static final double kDrivingMotorReduction = (45.0 * 22.0) / (kDrivingMotorPinionTeeth * 15.0);
@@ -71,13 +71,13 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0.2;
+            public static final double kP = 0.005;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         public static final class TurnMotorPID {
-            public static final double kP = 0.16;
+            public static final double kP = 0.08;
             public static final double kI = 0;
             public static final double kD = 0;
         }
