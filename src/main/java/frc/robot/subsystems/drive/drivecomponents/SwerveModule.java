@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive.drivecomponents;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
@@ -9,15 +10,36 @@ public class SwerveModule {
 
     private final DriveMotor m_driveMotor;
     private final TurnMotor m_turnMotor;
+
+    private final Rotation2d m_angularOffset;
     
-    public SwerveModule(String name, DriveMotor driveMotor, TurnMotor turnMotor) {
+    public SwerveModule(String name, DriveMotor driveMotor, TurnMotor turnMotor, Rotation2d angularOffset) {
         m_name = name;
 
         m_driveMotor = driveMotor;
         m_turnMotor = turnMotor;
+
+        m_angularOffset = angularOffset;
     }
 
-    public void setState(SwerveModuleState moduleState) {
+    public void setState(SwerveModuleState robotRelativeState) {
+        setModuleRelativeState(
+            moduleRelativeState(robotRelativeState)
+        );
+    }
+
+    public SwerveModulePosition getModulePosition() {
+        return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
+    }
+
+    private SwerveModuleState moduleRelativeState(SwerveModuleState moduleState) {
+        return new SwerveModuleState(
+            moduleState.speedMetersPerSecond,
+            moduleState.angle.plus(m_angularOffset)
+        );
+    }
+
+    private void setModuleRelativeState(SwerveModuleState moduleState) {
         moduleState.optimize(
             m_turnMotor.getAngle()
         );
@@ -29,9 +51,5 @@ public class SwerveModule {
         m_driveMotor.setLinearVelocity(
             Units.MetersPerSecond.of(moduleState.speedMetersPerSecond)
         );
-    }
-
-    public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
     }
 }

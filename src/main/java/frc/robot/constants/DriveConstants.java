@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
@@ -71,16 +72,23 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0.005;
+            public static final double kP = 0;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         public static final class TurnMotorPID {
-            public static final double kP = 0.08;
+            public static final double kP = 0.04;
             public static final double kI = 0;
             public static final double kD = 0;
         }
+    }
+
+    public static final class kModuleOffsets {
+        public static final Rotation2d kFrontLeft = Rotation2d.fromDegrees(-90);
+        public static final Rotation2d kFrontRight = Rotation2d.fromDegrees(0);
+        public static final Rotation2d kBackLeft = Rotation2d.fromDegrees(180);
+        public static final Rotation2d kBackRight = Rotation2d.fromDegrees(90);
     }
 
     public static final NavXComType kGyroComType = NavXComType.kUSB1;

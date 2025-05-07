@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.constants.DriveConstants.kCANIDs.kDriveMotorCANIDs;
 import frc.robot.constants.DriveConstants.kCANIDs.kTurnMotorCANIDs;
+import frc.robot.constants.DriveConstants.kModuleOffsets;
 import frc.robot.constants.DriveConstants.kWheelConstants.kWheelOffsetConstants;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drive.drivecomponents.DriveMotor;
@@ -40,23 +41,27 @@ public class DriveSubsystem extends Subsystem {
             new SwerveModule(
                 "Front Left Motor",
                 new DriveMotor("Front Left Drive", kDriveMotorCANIDs.kFrontLeft),
-                new TurnMotor("Front Left Turn", kTurnMotorCANIDs.kFrontLeft)
+                new TurnMotor("Front Left Turn", kTurnMotorCANIDs.kFrontLeft),
+                kModuleOffsets.kFrontLeft
             ), 
             new SwerveModule(
                 "Front Right Motor",
                 new DriveMotor("Front Right Drive", kDriveMotorCANIDs.kFrontRight),
-                new TurnMotor("Front Right Turn", kTurnMotorCANIDs.kFrontRight)
+                new TurnMotor("Front Right Turn", kTurnMotorCANIDs.kFrontRight),
+                kModuleOffsets.kFrontRight
             ),
             
             new SwerveModule(
                 "Back Left Motor",
                 new DriveMotor("Back Left Drive", kDriveMotorCANIDs.kBackLeft), 
-                new TurnMotor("Back Left Turn", kTurnMotorCANIDs.kBackLeft)
+                new TurnMotor("Back Left Turn", kTurnMotorCANIDs.kBackLeft),
+                kModuleOffsets.kBackLeft
             ),
             new SwerveModule(
                 "Back Right Motor",
                 new DriveMotor("Back Right Drive", kDriveMotorCANIDs.kBackRight), 
-                new TurnMotor("Back Right Turn", kTurnMotorCANIDs.kBackRight)
+                new TurnMotor("Back Right Turn", kTurnMotorCANIDs.kBackRight),
+                kModuleOffsets.kBackRight
             )
         };
 
