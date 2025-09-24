@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.subsystems;
+import frc.robot.constants.DriveConstants;
 
 
 public class FieldOrientedDriveCommand extends Command {
@@ -24,10 +25,10 @@ public class FieldOrientedDriveCommand extends Command {
     }
 
     private void fieldOrientedDrive() {
-        double xVel = m_xVel.getAsDouble();
-        double yVel = m_yVel.getAsDouble();
+        double xVel = m_xVel.getAsDouble() * (DriveConstants.kXInverted ? -1.0: 1.0) * DriveConstants.kMaxDriveVel;
+        double yVel = m_yVel.getAsDouble() * (DriveConstants.kYInverted ? -1.0 : 1.0) * DriveConstants.kMaxDriveVel;
         double rotVel = 
-            m_rotVel.getAsDouble() * Math.PI * 2; // full rotation * scalar
+            m_rotVel.getAsDouble() * DriveConstants.kMaxAngularVel; // full rotation * scalar
 
         subsystems.driveSubsystem.fieldOrientedDrive(xVel, yVel, rotVel);
     }

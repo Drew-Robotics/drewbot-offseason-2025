@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.FieldOrientedDriveCommand;
+import frc.robot.commands.TurnToAngleCommand;
 import frc.robot.controller.DriverController;
-// import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 public class RobotContainer {
@@ -30,6 +33,18 @@ public class RobotContainer {
                 m_driverController::getDriveX,
                 m_driverController::getDriveY,
                 m_driverController::getDriveRot
+            )
+        );
+
+        m_driverController.resetGyro().onTrue(
+            new InstantCommand(() -> subsystems.driveSubsystem.resetYaw(), new Subsystem[] {subsystems.driveSubsystem})
+        );
+
+        m_driverController.getTurnToAngle().whileTrue(
+            new TurnToAngleCommand(
+                m_driverController::getDriveX,
+                m_driverController::getDriveY,
+                Rotation2d.fromRadians(0)
             )
         );
     }

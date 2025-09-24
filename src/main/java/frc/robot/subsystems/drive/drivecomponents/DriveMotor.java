@@ -67,8 +67,7 @@ public class DriveMotor {
 
         setAngularVelocity(
             Units.RadiansPerSecond.of(
-                linearVel.in(Units.MetersPerSecond) * 
-                    (1 / DriveConstants.kWheelConstants.kWheelRadius.in(Units.Meters))
+                linearVel.in(Units.MetersPerSecond) * DriveConstants.kWheelConstants.kWheelRadius.in(Units.Meters)
             )
         );
     }

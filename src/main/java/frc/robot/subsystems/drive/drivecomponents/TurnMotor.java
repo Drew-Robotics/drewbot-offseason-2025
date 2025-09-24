@@ -13,7 +13,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants;
 import frc.robot.constants.DriveConstants.kConversionFactors.TurnMotorConversions;
 import frc.robot.constants.DriveConstants.kPID.TurnMotorPID;
@@ -29,6 +28,7 @@ public class TurnMotor {
     public TurnMotor(String name, int CANID) {
         
         m_motorController = new SparkMax(CANID, MotorType.kBrushless);
+
         m_CANID = CANID;
         m_name = name;
 
@@ -36,11 +36,12 @@ public class TurnMotor {
         m_closedLoop = m_motorController.getClosedLoopController();
 
         SparkMaxConfig configuration = new SparkMaxConfig();
-
+  
         configuration
-            .idleMode(IdleMode.kBrake)
+            .idleMode(IdleMode.kCoast)
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps));
-        configuration.encoder
+        configuration.absoluteEncoder
+            .inverted(true)
             .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor)
             .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor);
         configuration.closedLoop
@@ -54,15 +55,13 @@ public class TurnMotor {
             .positionWrappingEnabled(true)
             .positionWrappingInputRange(
                 0, 
-                DriveConstants.kConversionFactors.TurnMotorConversions.kPositionConversionFactor
+                TurnMotorConversions.kPositionConversionFactor
             );
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setAngle(Rotation2d angle) {
-        SmartDashboard.putNumber(m_name + ": Set Angle", angle.getDegrees());
-
         m_closedLoop.setReference(angle.getRadians(), ControlType.kPosition);
     }
 

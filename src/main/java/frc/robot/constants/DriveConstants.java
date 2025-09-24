@@ -5,6 +5,8 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 
@@ -72,15 +74,25 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0;
+            public static final double kP = 0.005;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         public static final class TurnMotorPID {
-            public static final double kP = 0.04;
+            public static final double kP = 1;
             public static final double kI = 0;
             public static final double kD = 0;
+        }
+
+        public static final class RotationPID {
+            public static final double kP = 40;
+            public static final double kI = 0;
+            public static final double kD = 0;
+            public static final class Constraints {
+                public static final AngularVelocity maxVelocity = Units.DegreesPerSecond.of(180);
+                public static final AngularAcceleration maxAcceleration = maxVelocity.times(2).per(Units.Second);
+            }
         }
     }
 
@@ -91,11 +103,21 @@ public class DriveConstants {
         public static final Rotation2d kBackRight = Rotation2d.fromDegrees(90);
     }
 
-    public static final NavXComType kGyroComType = NavXComType.kUSB1;
+    public static final class kGyro {
+        public static final boolean kGyroInverted = true;
+        public static final Rotation2d kGyroOffset = Rotation2d.fromDegrees(90);
+        public static final NavXComType kGyroComType = NavXComType.kUSB1;
+    }
 
     public static final double kFreeSpeedRpm = 5676;
     public static final double kDrivingVelocityFeedForward = 1.0 / kFreeSpeedRpm;
 
     public static final Distance kWheelBase = Units.Inches.of(23);
     public static final Distance kTrackWidth = Units.Inches.of(23);  
+
+    public static final boolean kXInverted = false;
+    public static final boolean kYInverted = true;
+
+    public static final double kMaxDriveVel = 3;
+    public static final double kMaxAngularVel = 16;
 }

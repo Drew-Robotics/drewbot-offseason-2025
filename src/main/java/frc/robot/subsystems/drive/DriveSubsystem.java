@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants.kCANIDs.kDriveMotorCANIDs;
 import frc.robot.constants.DriveConstants.kCANIDs.kTurnMotorCANIDs;
 import frc.robot.constants.DriveConstants.kModuleOffsets;
@@ -21,7 +22,7 @@ import frc.robot.subsystems.drive.drivecomponents.TurnMotor;
 public class DriveSubsystem extends Subsystem {
     private final SwerveModule[] m_swerveModules;
 
-    private final Gyroscope m_gyroscrope;
+    private final Gyroscope m_gyro;
 
     private final SwerveDriveKinematics m_kinematics;
     private final SwerveDrivePoseEstimator m_poseEstimator;
@@ -43,7 +44,7 @@ public class DriveSubsystem extends Subsystem {
                 new DriveMotor("Front Left Drive", kDriveMotorCANIDs.kFrontLeft),
                 new TurnMotor("Front Left Turn", kTurnMotorCANIDs.kFrontLeft),
                 kModuleOffsets.kFrontLeft
-            ), 
+            ),
             new SwerveModule(
                 "Front Right Motor",
                 new DriveMotor("Front Right Drive", kDriveMotorCANIDs.kFrontRight),
@@ -65,7 +66,7 @@ public class DriveSubsystem extends Subsystem {
             )
         };
 
-        m_gyroscrope = new Gyroscope();
+        m_gyro = new Gyroscope();
 
         m_kinematics = new SwerveDriveKinematics(
             kWheelOffsetConstants.kFrontLeftOffset,
@@ -76,7 +77,7 @@ public class DriveSubsystem extends Subsystem {
 
         m_poseEstimator = new SwerveDrivePoseEstimator(
             m_kinematics, 
-            m_gyroscrope.getRotation2dYaw(), 
+            m_gyro.getYaw(), 
             getModulePositions(),
             new Pose2d()
         );
@@ -85,7 +86,7 @@ public class DriveSubsystem extends Subsystem {
     // PRIVATE METHODS
 
     private SwerveModulePosition[] getModulePositions() {
-        return Arrays.stream(m_swerveModules).map(module -> module.getModulePosition()).toArray(SwerveModulePosition[]::new);
+       return Arrays.stream(m_swerveModules).map(module -> module.getModulePosition()).toArray(SwerveModulePosition[]::new);
     }
 
     private void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -95,8 +96,11 @@ public class DriveSubsystem extends Subsystem {
     }
 
     private void setModuleStates(SwerveModuleState[] swerveModuleStates) {
-        for (int i = 0; i < 4; i++)
-            m_swerveModules[i].setState(swerveModuleStates[i]);
+        for (
+            int i = 0; 
+            i < Math.min(swerveModuleStates.length, m_swerveModules.length); 
+            i++
+        ) m_swerveModules[i].setState(swerveModuleStates[i]);
     }
 
     // PUBLIC METHODS
@@ -107,29 +111,38 @@ public class DriveSubsystem extends Subsystem {
      * @param y y velocity
      * @param angle rotation velocity, radians per second
      */
-    public void fieldOrientedDrive(double x, double y, double angle) {
+    public void fieldOrientedDrive(double xVel, double yVel, double rotVel) {
         setChassisSpeeds(
             ChassisSpeeds.fromFieldRelativeSpeeds(
-                x, y, angle, 
-                m_gyroscrope.getRotation2dYaw()
+                xVel, yVel, rotVel, 
+                m_gyro.getYaw()
             )
         );
     }
 
     public void resetYaw() {
-        m_gyroscrope.resetYaw();
+        m_gyro.resetYaw();
+    }
+
+    public Pose2d getPose() {
+        return m_poseEstimator.getEstimatedPosition();
     }
 
     // OVERRIDES
 
     @Override
     public void periodic() {
-        m_poseEstimator.update(m_gyroscrope.getRotation2d(), getModulePositions());
+        super.periodic();
+
+        m_poseEstimator.update(m_gyro.getYaw(), getModulePositions());
     }
 
     // Logging
 
     protected void publishInit() {}
 
-    protected void publishPeriodic() {}
+    protected void publishPeriodic() {
+        SmartDashboard.putNumber("Gyroscope Yaw", m_gyro.getYaw().getRadians());
+        SmartDashboard.putNumber("Gyroscope Yaw Degrees", m_gyro.getYaw().getDegrees());
+    }
 }

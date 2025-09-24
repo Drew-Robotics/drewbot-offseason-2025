@@ -22,9 +22,9 @@ public class SwerveModule {
         m_angularOffset = angularOffset;
     }
 
-    public void setState(SwerveModuleState robotRelativeState) {
-        setModuleRelativeState(
-            moduleRelativeState(robotRelativeState)
+    public void setState(SwerveModuleState moduleRelativeState) {
+        setRobotRelativeState(
+            robotRelativeState(moduleRelativeState)
         );
     }
 
@@ -32,21 +32,19 @@ public class SwerveModule {
         return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
     }
 
-    private SwerveModuleState moduleRelativeState(SwerveModuleState moduleState) {
+    private SwerveModuleState robotRelativeState(SwerveModuleState moduleState) {
+        // System.out.println(moduleState.angle.plus(m_angularOffset).getRadians());
+
         return new SwerveModuleState(
             moduleState.speedMetersPerSecond,
             moduleState.angle.plus(m_angularOffset)
         );
     }
 
-    private void setModuleRelativeState(SwerveModuleState moduleState) {
-        moduleState.optimize(
-            m_turnMotor.getAngle()
-        );
+    private void setRobotRelativeState(SwerveModuleState moduleState) {
+        moduleState.optimize(m_turnMotor.getAngle());
 
-        m_turnMotor.setAngle(
-            moduleState.angle
-        );
+        m_turnMotor.setAngle(moduleState.angle);
 
         m_driveMotor.setLinearVelocity(
             Units.MetersPerSecond.of(moduleState.speedMetersPerSecond)
