@@ -43,19 +43,33 @@ public class DriveMotor {
 
         configuration
             .idleMode(IdleMode.kBrake)
+                // Sets "idle" mode for motor, i.e. here it stops the motor from moving when its not doing anything
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
+                // Just a current limit for the motor to make sure we dont explode the motor
         configuration.encoder
             .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor)
+                // sets the position conversion factor, 
+                // you don't need to check that its just conversions from gear ratios and radians to linear stuff 
             .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor);
+                // same
         configuration.closedLoop
+            // PID
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                // Sets the encoder for this, depending on what kind of encoder it uses is important
+                // sometimes there will be an absolute encoder so change accordingly
             .pid(
                 DriveMotorPID.kP, 
                 DriveMotorPID.kI, 
                 DriveMotorPID.kD
             )
+                // pid constants
             .outputRange(-1, 1)
+                // usu. -1 to 1, can be contrained more tightly
+                // unless you know what you are doing dont go less than -1 or greater than 1
+                    // this is outside the range for commands to the motor
             .velocityFF(DriveConstants.kDrivingVelocityFeedForward);
+                // feedforward, you can ask me about this later im 
+                // honestly kinda confuzzled bc its actually way more important than i thought it was
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -65,31 +79,13 @@ public class DriveMotor {
     public void setLinearVelocity(LinearVelocity linearVel) {
         SmartDashboard.putNumber(m_name + ": Linear Velocity", linearVel.in(Units.MetersPerSecond));
 
-        setAngularVelocity(
-            Units.RadiansPerSecond.of(
-                linearVel.in(Units.MetersPerSecond) * DriveConstants.kWheelConstants.kWheelRadius.in(Units.Meters)
-            )
-        );
-    }
-
-    public void setAngularVelocity(AngularVelocity angularVel) {
-        SmartDashboard.putNumber(m_name + ": Angular Velocity", angularVel.in(RadiansPerSecond));
-
-        m_closedLoop.setReference(
-            angularVel.in(Units.RadiansPerSecond), ControlType.kVelocity
-        );
+        m_closedLoop.setReference(linearVel.in(Units.MetersPerSecond), ControlType.kVelocity);
     }
 
     // GETTERS
 
     public LinearVelocity getLinearVelocity() {
-        return Units.MetersPerSecond.of(
-            m_encoder.getVelocity() * DriveConstants.kWheelConstants.kWheelRadius.in(Units.Meters)
-        );
-    }
-
-    public AngularVelocity getAngularVelocity() {
-        return Units.RadiansPerSecond.of(m_encoder.getVelocity());
+        return Units.MetersPerSecond.of(m_encoder.getVelocity());
     }
 
     public Distance getDistance() {

@@ -6,6 +6,4 @@ public class L1CoralConstants {
         public static final int kCoralHand = 0;
         public static final int kCoralCorrection = 0;
     }
-
-   
 }

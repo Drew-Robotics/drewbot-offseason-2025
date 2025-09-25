@@ -54,13 +54,13 @@ public class DriveConstants {
         public static final class DriveMotorConversions {
             public static final int kDrivingMotorPinionTeeth = 14;
 
-            public static final double kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60.0;
-            public static final Distance kWheelDiameter = kWheelConstants.kWheelRadius.times(2);
-            public static final double kWheelCircumferenceMeters = kWheelDiameter.in(Units.Meters) * Math.PI;
+            // public static final double kDrivingMotorFreeSpeedRps = kFreeSpeedRpm / 60.0;
+            public static final double kWheelCircumferenceMeters = 
+                kWheelConstants.kWheelRadius.in(Units.Meters) * Math.PI * 2;
 
             public static final double kDrivingMotorReduction = (45.0 * 22.0) / (kDrivingMotorPinionTeeth * 15.0);
-            public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) 
-                / kDrivingMotorReduction;
+            // public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) 
+            //    / kDrivingMotorReduction;
 
             public static final double kPositionConversionFactor = kDrivingMotorReduction * kWheelCircumferenceMeters;
             public static final double kVelocityConversionFactor = kPositionConversionFactor / 60.0;
