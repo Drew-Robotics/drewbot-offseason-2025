@@ -16,10 +16,11 @@ public class ElevatorConstants {
             ((1 - kMinRotations) / (kMaxRotations - kMinRotations)) 
                 * (kMaxHeight.in(Units.Meters) - kMinHeight.in(Units.Meters)) + kMinHeight.in(Units.Meters)
         );
+        
         public static final LinearVelocity kElevatorVelocityConversion = kElevatorPositionConversion.per(Units.Second);
     }
 
-    public static final class ClosedLoop {
+    public static final class PID {
         public static final int kP = 0;
         public static final int kI = 0;
         public static final int kD = 0;
