@@ -1,17 +1,26 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import java.util.Arrays;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants.kCANIDs.kDriveMotorCANIDs;
 import frc.robot.constants.DriveConstants.kCANIDs.kTurnMotorCANIDs;
 import frc.robot.constants.DriveConstants.kModuleOffsets;
+import frc.robot.constants.DriveConstants.kPID.RotationPID;
 import frc.robot.constants.DriveConstants.kWheelConstants.kWheelOffsetConstants;
 import frc.robot.subsystems.Subsystem;
 import frc.robot.subsystems.drive.drivecomponents.DriveMotor;
@@ -26,6 +35,8 @@ public class DriveSubsystem extends Subsystem {
 
     private final SwerveDriveKinematics m_kinematics;
     private final SwerveDrivePoseEstimator m_poseEstimator;
+
+    private final ProfiledPIDController m_rotationPID;
 
     private static DriveSubsystem m_instance;
     public static DriveSubsystem getInstance() {
@@ -81,6 +92,18 @@ public class DriveSubsystem extends Subsystem {
             getModulePositions(),
             new Pose2d()
         );
+
+        m_rotationPID = new ProfiledPIDController(
+            RotationPID.kP,
+            RotationPID.kI,
+            RotationPID.kD,
+            new Constraints(
+                RotationPID.Constraints.maxVelocity.in(Units.RadiansPerSecond), 
+                RotationPID.Constraints.maxAcceleration.in(Units.RadiansPerSecondPerSecond)
+            )
+        );
+
+        m_rotationPID.enableContinuousInput(Math.PI * -1, Math.PI);
     }
 
     // PRIVATE METHODS
@@ -107,16 +130,40 @@ public class DriveSubsystem extends Subsystem {
 
     /**
      * 
-     * @param x x velocity
-     * @param y y velocity
-     * @param angle rotation velocity, radians per second
+     * @param xVel x velocity
+     * @param yVel y velocity
+     * @param rotVel rotation velocity, radians per second
      */
-    public void fieldOrientedDrive(double xVel, double yVel, double rotVel) {
+    public void fieldOrientedDrive(LinearVelocity xVel, LinearVelocity yVel, AngularVelocity rotVel) {
         setChassisSpeeds(
             ChassisSpeeds.fromFieldRelativeSpeeds(
-                xVel, yVel, rotVel, 
+                xVel.in(Units.MetersPerSecond), 
+                yVel.in(Units.MetersPerSecond), 
+                rotVel.in(Units.RadiansPerSecond), 
                 m_gyro.getYaw()
             )
+        );
+    }
+
+    /**
+     * 
+     * @param xVel x velocity
+     * @param yVel y velocity
+     * @param angle angle to set the robot to
+     */
+    public void turnToAngleDrive(LinearVelocity xVel, LinearVelocity yVel, Rotation2d angle) {
+        AngularVelocity commandedAngleVel = 
+            RadiansPerSecond.of(
+                m_rotationPID.calculate(
+                    getPose().getRotation().getRadians(), 
+                    angle.getRadians()
+                )
+            );
+
+        fieldOrientedDrive(
+            xVel,
+            yVel,
+            commandedAngleVel
         );
     }
 

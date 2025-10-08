@@ -1,46 +1,25 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Radian;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.subsystems;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.DriveConstants.kPID.RotationPID;
 
 public class TurnToAngleCommand extends Command {
-    private final Rotation2d m_commandedAngle;
-    private final ProfiledPIDController m_pidController;
+    private final Rotation2d m_setAngle;
 
-    private final DoubleSupplier m_xVelocity;
-    private final DoubleSupplier m_yVelocity;
+    private final DoubleSupplier m_xVel;
+    private final DoubleSupplier m_yVel;
 
 
     public TurnToAngleCommand(DoubleSupplier xVel, DoubleSupplier yVel, Rotation2d rot) {
-        m_commandedAngle = rot;
+        m_setAngle = rot;
 
-        m_xVelocity = xVel;
-        m_yVelocity = yVel;
-
-        m_pidController = new ProfiledPIDController(
-            RotationPID.kP,
-            RotationPID.kI,
-            RotationPID.kD,
-            new Constraints(
-                RotationPID.Constraints.maxVelocity.in(RadiansPerSecond), 
-                RotationPID.Constraints.maxAcceleration.in(RadiansPerSecondPerSecond)
-            )
-        );
-
-        m_pidController.enableContinuousInput(Math.PI * -1, Math.PI);
+        m_xVel = xVel;
+        m_yVel = yVel;
 
         addRequirements(subsystems.driveSubsystem);
     }
@@ -50,13 +29,19 @@ public class TurnToAngleCommand extends Command {
 
     @Override
     public void execute() {
-        Rotation2d rotation = subsystems.driveSubsystem.getPose().getRotation();
-        double commanded = m_pidController.calculate(rotation.getRadians(), m_commandedAngle.getRadians() - Math.PI);
+        LinearVelocity xVel =  
+            DriveConstants.kMaxDriveVel.times(
+                (DriveConstants.kXInverted ? -1.0 : 1.0) * m_xVel.getAsDouble()
+            );
+        LinearVelocity yVel = 
+            DriveConstants.kMaxDriveVel.times(
+                (DriveConstants.kYInverted ? -1.0 : 1.0) * m_yVel.getAsDouble()
+            );
 
-        subsystems.driveSubsystem.fieldOrientedDrive(
-            m_xVelocity.getAsDouble() * (DriveConstants.kXInverted ? -1.0 : 1.0) * DriveConstants.kMaxDriveVel,
-            m_yVelocity.getAsDouble() * (DriveConstants.kYInverted ? -1.0 : 1.0) * DriveConstants.kMaxDriveVel,
-            commanded * -1
+        subsystems.driveSubsystem.turnToAngleDrive(
+            xVel,
+            yVel,
+            m_setAngle
         );
     }
 

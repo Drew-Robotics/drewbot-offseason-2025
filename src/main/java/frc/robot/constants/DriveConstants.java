@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 
 public class DriveConstants {
     public static final class kCANIDs {
@@ -118,6 +119,6 @@ public class DriveConstants {
     public static final boolean kXInverted = false;
     public static final boolean kYInverted = true;
 
-    public static final double kMaxDriveVel = 3;
-    public static final double kMaxAngularVel = 16;
+    public static final LinearVelocity kMaxDriveVel = Units.MetersPerSecond.of(3).div(2);
+    public static final AngularVelocity kMaxAngularVel = Units.RadiansPerSecond.of(2 * Math.PI).div(2);
 }
