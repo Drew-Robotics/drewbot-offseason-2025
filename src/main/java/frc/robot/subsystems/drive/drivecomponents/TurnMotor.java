@@ -18,7 +18,9 @@ import frc.robot.constants.DriveConstants.kConversionFactors.TurnMotorConversion
 import frc.robot.constants.DriveConstants.kPID.TurnMotorPID;
 
 public class TurnMotor {
+    @SuppressWarnings("unused")
     private final int m_CANID;
+    @SuppressWarnings("unused")
     private final String m_name;
 
     private final SparkMax m_motorController;
@@ -42,8 +44,8 @@ public class TurnMotor {
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps));
         configuration.absoluteEncoder
             .inverted(true)
-            .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor)
-            .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor);
+            .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor.in(Units.Radians))
+            .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor.in(Units.RadiansPerSecond));
         configuration.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pid(
@@ -55,7 +57,7 @@ public class TurnMotor {
             .positionWrappingEnabled(true)
             .positionWrappingInputRange(
                 0, 
-                TurnMotorConversions.kPositionConversionFactor
+                TurnMotorConversions.kPositionConversionFactor.in(Units.Radians)
             );
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

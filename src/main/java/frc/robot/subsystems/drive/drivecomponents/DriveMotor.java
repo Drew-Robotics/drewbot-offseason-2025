@@ -44,29 +44,26 @@ public class DriveMotor {
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
                 // Just a current limit for the motor to make sure we dont explode the motor
         configuration.encoder
-            .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor)
+            .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor.in(Units.Meters))
                 // sets the position conversion factor, 
                 // you don't need to check that its just conversions from gear ratios and radians to linear stuff 
-            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor);
+            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor.in(Units.MetersPerSecond));
                 // same
         configuration.closedLoop
             // PID
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 // Sets the encoder for this, depending on what kind of encoder it uses is important
                 // sometimes there will be an absolute encoder so change accordingly
-            .pid(
+            .pidf(
                 DriveMotorPID.kP, 
                 DriveMotorPID.kI, 
-                DriveMotorPID.kD
+                DriveMotorPID.kD,
+                DriveMotorPID.kFF
             )
                 // pid constants
-            .outputRange(-1, 1)
+            .outputRange(-1, 1);
                 // usu. -1 to 1, can be contrained more tightly
                 // unless you know what you are doing dont go less than -1 or greater than 1
-                    // this is outside the range for commands to the motor
-            .velocityFF(DriveConstants.kDrivingVelocityFeedForward);
-                // feedforward, you can ask me about this later im 
-                // honestly kinda confuzzled bc its actually way more important than i thought it was
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -74,7 +71,7 @@ public class DriveMotor {
     // SETTERS
 
     public void setLinearVelocity(LinearVelocity linearVel) {
-        SmartDashboard.putNumber(m_name + ": Linear Velocity", linearVel.in(Units.MetersPerSecond));
+        SmartDashboard.putNumber(m_name + ": Set Linear Velocity m/s", linearVel.in(Units.MetersPerSecond));
 
         m_closedLoop.setReference(linearVel.in(Units.MetersPerSecond), ControlType.kVelocity);
     }
