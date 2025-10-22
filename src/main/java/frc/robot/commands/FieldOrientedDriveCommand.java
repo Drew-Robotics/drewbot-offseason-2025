@@ -28,15 +28,15 @@ public class FieldOrientedDriveCommand extends Command {
 
     private void fieldOrientedDrive() {
         LinearVelocity xVel =  
-            DriveConstants.kMaxDriveVel.times(
+            DriveConstants.kMaxVels.kMaxDrive.times(
                 (DriveConstants.kXInverted ? -1.0 : 1.0) * m_xVel.getAsDouble()
             );
         LinearVelocity yVel = 
-            DriveConstants.kMaxDriveVel.times(
+            DriveConstants.kMaxVels.kMaxDrive.times(
                 (DriveConstants.kYInverted ? -1.0 : 1.0) * m_yVel.getAsDouble()
             );
         AngularVelocity rotVel = 
-            DriveConstants.kMaxAngularVel.times(
+            DriveConstants.kMaxVels.kMaxAngular.times(
                 m_rotVel.getAsDouble()
             );
 

@@ -6,6 +6,7 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -14,6 +15,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.constants.MeasureConstants.kBodyMeasures;
+import frc.robot.constants.MeasureConstants.kSwerveMeasures;
 
 public class DriveConstants {
     public static final class kCANIDs {
@@ -34,19 +37,15 @@ public class DriveConstants {
         }
     }
 
-    public static final class kWheelConstants {
-        public static final Distance kWheelRadius = Units.Inches.of(3);
-
-        public static final class kWheelOffsetConstants {
-            public static final Translation2d kFrontLeftOffset = 
-                new Translation2d(kWheelBase.div(2), kTrackWidth.div(2));
-            public static final Translation2d kFrontRightOffset =
-                new Translation2d(kWheelBase.div(2), kTrackWidth.div(2).negate());
-            public static final Translation2d kBackLeftOffset = 
-                new Translation2d(kWheelBase.div(2).negate(), kTrackWidth.div(2));
-            public static final Translation2d kBackRightOffset =
-                new Translation2d(kWheelBase.div(2).negate(), kTrackWidth.div(2).negate());
-        }
+    public static final class kWheelOffsetConstants {
+        public static final Translation2d kFrontLeftOffset = 
+            new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kTrackWidth.div(2));
+        public static final Translation2d kFrontRightOffset =
+            new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kTrackWidth.div(2).negate());
+        public static final Translation2d kBackLeftOffset = 
+            new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kTrackWidth.div(2));
+        public static final Translation2d kBackRightOffset =
+            new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kTrackWidth.div(2).negate());
     }
 
     public static final class kCurrentLimits {
@@ -58,23 +57,17 @@ public class DriveConstants {
         public static final DCMotor kDriveMotor = DCMotor.getNeoVortex(1);
         public static final DCMotor kTurningMotor = DCMotor.getNeo550(1);
 
-        public static final Distance kWheelCircumference = 
-            kWheelConstants.kWheelRadius.times(Math.PI * 2);
-
-        public static final int kDrivingMotorPinionTeeth = 12;
-        public static final double kDrivingMotorReduction = (45d * 22d) / (kDrivingMotorPinionTeeth * 15d);
-
         public static final AngularVelocity kDriveMotorFreeSpeed = Units.RadiansPerSecond.of(kDriveMotor.freeSpeedRadPerSec);
         public static final LinearVelocity kDriveWheelFreeSpeed = 
             Units.MetersPerSecond.of(
-                kDriveMotorFreeSpeed.in(RevolutionsPerSecond) * kWheelCircumference.in(Units.Meters) / kDrivingMotorReduction
+                kDriveMotorFreeSpeed.in(RevolutionsPerSecond) * kSwerveMeasures.kWheelCircumference.in(Units.Meters) / kSwerveMeasures.kDrivingMotorReduction
             ); // multiply by the conversion rate to convert it
 
     }
 
     public static final class kConversionFactors {
         public static final class DriveMotorConversions {
-            public static final Distance kPositionConversionFactor = kSwerveCalculations.kWheelCircumference.div(kSwerveCalculations.kDrivingMotorReduction);
+            public static final Distance kPositionConversionFactor = kSwerveMeasures.kWheelCircumference.div(kSwerveMeasures.kDrivingMotorReduction);
             public static final LinearVelocity kVelocityConversionFactor = kPositionConversionFactor.per(Units.Seconds);
         }
 
@@ -122,15 +115,21 @@ public class DriveConstants {
         public static final NavXComType kGyroComType = NavXComType.kUSB1;
     }
 
+    public static final class kMaxVels {
+        public static final LinearVelocity kMaxDrive = Units.MetersPerSecond.of(4.5).div(2);
+        public static final AngularVelocity kMaxAngular = Units.RadiansPerSecond.of(2 * Math.PI).div(2);
+    }
+
     public static final double kFreeSpeedRpm = 5676;
     public static final double kDrivingVelocityFeedForward = 1.0 / kFreeSpeedRpm;
-
-    public static final Distance kWheelBase = Units.Inches.of(23);
-    public static final Distance kTrackWidth = Units.Inches.of(23);  
 
     public static final boolean kXInverted = false;
     public static final boolean kYInverted = true;
 
-    public static final LinearVelocity kMaxDriveVel = Units.MetersPerSecond.of(4.5).div(2);
-    public static final AngularVelocity kMaxAngularVel = Units.RadiansPerSecond.of(2 * Math.PI).div(2);
+    public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
+        kWheelOffsetConstants.kFrontLeftOffset,
+        kWheelOffsetConstants.kFrontRightOffset,
+        kWheelOffsetConstants.kBackLeftOffset,
+        kWheelOffsetConstants.kBackRightOffset
+    );
 }

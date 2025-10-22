@@ -33,6 +33,10 @@ public class SwerveModule {
         return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
     }
 
+    public SwerveModuleState getModuleState() {
+        return new SwerveModuleState(m_driveMotor.getLinearVelocity(), m_turnMotor.getAngle());
+    }
+
     private SwerveModuleState robotRelativeState(SwerveModuleState moduleState) {
         // System.out.println(moduleState.angle.plus(m_angularOffset).getRadians());
 

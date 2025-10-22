@@ -30,11 +30,11 @@ public class TurnToAngleCommand extends Command {
     @Override
     public void execute() {
         LinearVelocity xVel =  
-            DriveConstants.kMaxDriveVel.times(
+            DriveConstants.kMaxVels.kMaxDrive.times(
                 (DriveConstants.kXInverted ? -1.0 : 1.0) * m_xVel.getAsDouble()
             );
         LinearVelocity yVel = 
-            DriveConstants.kMaxDriveVel.times(
+            DriveConstants.kMaxVels.kMaxDrive.times(
                 (DriveConstants.kYInverted ? -1.0 : 1.0) * m_yVel.getAsDouble()
             );
 

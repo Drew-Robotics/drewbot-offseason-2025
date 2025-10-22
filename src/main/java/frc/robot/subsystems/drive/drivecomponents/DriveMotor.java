@@ -16,8 +16,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.DriveConstants.kConversionFactors.DriveMotorConversions;
-import frc.robot.constants.DriveConstants.kPID.DriveMotorPID;
+import frc.robot.constants.DriveConstants.kDriveConversionFactors.DriveMotorConversions;
+import frc.robot.constants.DriveConstants.kDrivePID.DriveMotorPID;
 
 public class DriveMotor {
     public final int m_CANID;
@@ -41,7 +41,7 @@ public class DriveMotor {
         configuration
             .idleMode(IdleMode.kBrake)
                 // Sets "idle" mode for motor, i.e. here it stops the motor from moving when its not doing anything
-            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
+            .smartCurrentLimit((int) DriveConstants.kDriveCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
                 // Just a current limit for the motor to make sure we dont explode the motor
         configuration.encoder
             .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor.in(Units.Meters))
