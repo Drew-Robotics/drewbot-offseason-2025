@@ -11,10 +11,9 @@ public class MeasureConstants {
         public static final Distance kWheelRadius = Units.Inches.of(3);
         public static final Distance kWheelCircumference = kWheelRadius.times(Math.PI * 2);
 
-        public static final int kDrivingMotorPinionTeeth = 12;
-        public static final double kDrivingMotorReduction = (45d * 22d) / (kDrivingMotorPinionTeeth * 15d);
+        public static final double kDrivingMotorReduction = 5.5d;
 
-        public static final double kCoefficientOfFriction = 1.45;
+        public static final double kCoefficientOfFriction = 1.45d;
 
         public static final int kNumMotors = 4;
 
