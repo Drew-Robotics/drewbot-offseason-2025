@@ -12,6 +12,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -25,6 +26,7 @@ import frc.robot.constants.DriveConstants;
 import frc.robot.constants.DriveConstants.kCANIDs.kDriveMotorCANIDs;
 import frc.robot.constants.DriveConstants.kCANIDs.kTurnMotorCANIDs;
 import frc.robot.constants.DriveConstants.kModuleOffsets;
+import frc.robot.constants.DriveConstants.kSwerveCalculations;
 import frc.robot.constants.DriveConstants.kPID.RotationPID;
 import frc.robot.constants.PathPlannerConstants;
 import frc.robot.subsystems.Subsystem;
@@ -120,9 +122,11 @@ public class DriveSubsystem extends Subsystem {
      * Robot Relative ChassisSpeeds
      */
     private void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-        setModuleStates(
-            DriveConstants.kKinematics.toSwerveModuleStates(chassisSpeeds)
-        );
+        SwerveModuleState[] states = DriveConstants.kKinematics.toSwerveModuleStates(chassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, kSwerveCalculations.kDriveWheelFreeSpeed);
+
+        setModuleStates(states);
     }
 
     private void setModuleStates(SwerveModuleState[] swerveModuleStates) {
