@@ -8,9 +8,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.TurnToAngleCommand;
 import frc.robot.controller.DriverController;
@@ -30,8 +30,10 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
 
-        pathplanner();
+        subsystems.driveSubsystem.setupPathplanner();
         m_autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", m_autoChooser);
     }
 
     private void configureBindings() {
@@ -44,7 +46,7 @@ public class RobotContainer {
         );
 
         m_driverController.resetGyro().onTrue(
-            new InstantCommand(() -> subsystems.driveSubsystem.resetYaw(), new Subsystem[] {subsystems.driveSubsystem})
+            new InstantCommand(() -> subsystems.driveSubsystem.resetYaw(), subsystems.driveSubsystem)
         );
 
         m_driverController.getTurnToAngle().whileTrue(
@@ -56,11 +58,9 @@ public class RobotContainer {
         );
     }
 
-    private void pathplanner() {
-        subsystems.driveSubsystem.configurePathPlanner();
-    }
-
     public Command getAutonomousCommand() {
+        System.out.println("Auto selected: " + m_autoChooser.getSelected());
+
         return m_autoChooser.getSelected();
     }
 }

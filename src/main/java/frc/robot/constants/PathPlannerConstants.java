@@ -11,7 +11,7 @@ import frc.robot.constants.MeasureConstants.kSwerveMeasures;
 public class PathPlannerConstants {
 
     public static final ModuleConfig kModuleConfig = new ModuleConfig(
-        MeasureConstants.kSwerveMeasures.kWheelRadius, 
+        MeasureConstants.kSwerveMeasures.kWheelDiameter.div(2), 
         Units.MetersPerSecond.of(5.65),
         MeasureConstants.kSwerveMeasures.kCoefficientOfFriction, 
         DriveConstants.kSwerveCalculations.kDriveMotor, 
@@ -28,7 +28,7 @@ public class PathPlannerConstants {
 
     public final static class kPID {
         public final static class kTranslationPID {
-            public final static double kP = 0.1;
+            public final static double kP = 10;
             public final static double kI = 0;
             public final static double kD = 0;
 

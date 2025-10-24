@@ -4,11 +4,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -201,26 +198,7 @@ public class DriveSubsystem extends Subsystem {
         return DriveConstants.kKinematics.toChassisSpeeds(getModuleStates());  
     }
 
-    private void setupPathplanner() {
-        AutoBuilder.configure(
-                this::getPose,
-                this::resetPose,
-                this::getChassisSpeeds,
-                (speeds, feedforwards) -> setChassisSpeeds(speeds),
-                PathPlannerConstants.kDriveController,
-                PathPlannerConstants.kRobotConfig,
-                () -> {
-                  var alliance = DriverStation.getAlliance();
-                  if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                  }
-                  return false;
-                },
-                this
-        );
-    }
-
-    public void configurePathPlanner() {
+    public void setupPathplanner() {
         BooleanSupplier isRedSupplier = () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
         AutoBuilder.configure(

@@ -8,8 +8,8 @@ import edu.wpi.first.units.measure.Distance;
 
 public class MeasureConstants {
     public static final class kSwerveMeasures {
-        public static final Distance kWheelRadius = Units.Inches.of(3);
-        public static final Distance kWheelCircumference = kWheelRadius.times(Math.PI * 2);
+        public static final Distance kWheelDiameter = Units.Inches.of(2.82);
+        public static final Distance kWheelCircumference = kWheelDiameter.times(Math.PI);
 
         public static final double kDrivingMotorReduction = 5.5d;
 

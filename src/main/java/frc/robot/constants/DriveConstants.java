@@ -79,7 +79,7 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0.005;
+            public static final double kP = 0.001;
             public static final double kI = 0;
             public static final double kD = 0;
             public static final double kFF = 1 / kSwerveCalculations.kDriveWheelFreeSpeed.in(Units.MetersPerSecond);
@@ -116,8 +116,10 @@ public class DriveConstants {
     }
 
     public static final class kMaxVels {
-        public static final LinearVelocity kMaxDrive = Units.MetersPerSecond.of(4.5).div(2);
-        public static final AngularVelocity kMaxAngular = Units.RadiansPerSecond.of(2 * Math.PI).div(2);
+        private static final boolean kLimitSpeed = false;
+
+        public static final LinearVelocity kMaxDrive = Units.MetersPerSecond.of(3).div(kLimitSpeed ? 2 : 1);
+        public static final AngularVelocity kMaxAngular = Units.RadiansPerSecond.of(2 * Math.PI).div(kLimitSpeed ? 2 : 1);
     }
 
     public static final double kFreeSpeedRpm = 5676;

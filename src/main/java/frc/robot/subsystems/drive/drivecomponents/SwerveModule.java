@@ -6,7 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 
 public class SwerveModule {
-    //private final String m_name;
+    private final String m_name;
 
     private final DriveMotor m_driveMotor;
     private final TurnMotor m_turnMotor;
@@ -14,7 +14,7 @@ public class SwerveModule {
     private final Rotation2d m_angularOffset;
     
     public SwerveModule(String name, DriveMotor driveMotor, TurnMotor turnMotor, Rotation2d angularOffset) {
-        //m_name = name;
+        m_name = name;
 
         m_driveMotor = driveMotor;
         m_turnMotor = turnMotor;
@@ -22,9 +22,9 @@ public class SwerveModule {
         m_angularOffset = angularOffset;
     }
 
-    public void setState(SwerveModuleState moduleRelativeState) {
+    public void setState(SwerveModuleState robotRelativeState) {
         setRobotRelativeState(
-            toModuleRelativeState(moduleRelativeState)
+            toModuleRelativeState(robotRelativeState)
         );
     }
 
@@ -37,8 +37,6 @@ public class SwerveModule {
     }
 
     private SwerveModuleState toModuleRelativeState(SwerveModuleState moduleState) {
-        System.out.println(moduleState.speedMetersPerSecond);
-
         return new SwerveModuleState(
             moduleState.speedMetersPerSecond,
             moduleState.angle.plus(m_angularOffset)
