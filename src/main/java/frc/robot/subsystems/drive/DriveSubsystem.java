@@ -103,8 +103,6 @@ public class DriveSubsystem extends Subsystem {
         );
 
         m_rotationPID.enableContinuousInput(Math.PI * -1, Math.PI);
-
-        setupPathplanner();
     }
 
     // PRIVATE METHODS
