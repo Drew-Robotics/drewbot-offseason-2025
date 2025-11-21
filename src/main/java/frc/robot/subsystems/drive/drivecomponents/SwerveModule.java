@@ -6,6 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 
 public class SwerveModule {
+    @SuppressWarnings("unused")
     private final String m_name;
 
     private final DriveMotor m_driveMotor;
@@ -30,6 +31,10 @@ public class SwerveModule {
 
     public SwerveModulePosition getModulePosition() {
         return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
+    }
+
+    public SwerveModuleState getModuleState() {
+        return new SwerveModuleState(m_driveMotor.getLinearVelocity(), m_turnMotor.getAngle());
     }
 
     private SwerveModuleState robotRelativeState(SwerveModuleState moduleState) {

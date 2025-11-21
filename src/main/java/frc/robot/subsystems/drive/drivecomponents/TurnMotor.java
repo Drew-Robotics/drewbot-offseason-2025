@@ -14,11 +14,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.DriveConstants.kConversionFactors.TurnMotorConversions;
-import frc.robot.constants.DriveConstants.kPID.TurnMotorPID;
+import frc.robot.constants.DriveConstants.kDriveConversionFactors.TurnMotorConversions;
+import frc.robot.constants.DriveConstants.kDrivePID.TurnMotorPID;
 
 public class TurnMotor {
+    @SuppressWarnings("unused")
     private final int m_CANID;
+    @SuppressWarnings("unused")
     private final String m_name;
 
     private final SparkMax m_motorController;
@@ -39,11 +41,11 @@ public class TurnMotor {
   
         configuration
             .idleMode(IdleMode.kCoast)
-            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps));
+            .smartCurrentLimit((int) DriveConstants.kDriveCurrentLimits.kTurnMotorCurrentLimit.in(Units.Amps));
         configuration.absoluteEncoder
             .inverted(true)
-            .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor)
-            .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor);
+            .positionConversionFactor(TurnMotorConversions.kPositionConversionFactor.in(Units.Radians))
+            .velocityConversionFactor(TurnMotorConversions.kVelocityConversionFactor.in(Units.RadiansPerSecond));
         configuration.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pid(
@@ -55,7 +57,7 @@ public class TurnMotor {
             .positionWrappingEnabled(true)
             .positionWrappingInputRange(
                 0, 
-                TurnMotorConversions.kPositionConversionFactor
+                TurnMotorConversions.kPositionConversionFactor.in(Units.Radians)
             );
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

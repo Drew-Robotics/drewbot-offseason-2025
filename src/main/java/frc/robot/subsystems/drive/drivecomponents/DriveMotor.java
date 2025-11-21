@@ -1,7 +1,5 @@
 package frc.robot.subsystems.drive.drivecomponents;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -14,13 +12,12 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.DriveConstants;
-import frc.robot.constants.DriveConstants.kConversionFactors.DriveMotorConversions;
-import frc.robot.constants.DriveConstants.kPID.DriveMotorPID;
+import frc.robot.constants.DriveConstants.kDriveConversionFactors.DriveMotorConversions;
+import frc.robot.constants.DriveConstants.kDrivePID.DriveMotorPID;
 
 public class DriveMotor {
     public final int m_CANID;
@@ -44,32 +41,29 @@ public class DriveMotor {
         configuration
             .idleMode(IdleMode.kBrake)
                 // Sets "idle" mode for motor, i.e. here it stops the motor from moving when its not doing anything
-            .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
+            .smartCurrentLimit((int) DriveConstants.kDriveCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
                 // Just a current limit for the motor to make sure we dont explode the motor
         configuration.encoder
-            .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor)
+            .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor.in(Units.Meters))
                 // sets the position conversion factor, 
                 // you don't need to check that its just conversions from gear ratios and radians to linear stuff 
-            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor);
+            .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor.in(Units.MetersPerSecond));
                 // same
         configuration.closedLoop
             // PID
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                 // Sets the encoder for this, depending on what kind of encoder it uses is important
                 // sometimes there will be an absolute encoder so change accordingly
-            .pid(
+            .pidf(
                 DriveMotorPID.kP, 
                 DriveMotorPID.kI, 
-                DriveMotorPID.kD
+                DriveMotorPID.kD,
+                DriveMotorPID.kFF
             )
                 // pid constants
-            .outputRange(-1, 1)
+            .outputRange(-1, 1);
                 // usu. -1 to 1, can be contrained more tightly
                 // unless you know what you are doing dont go less than -1 or greater than 1
-                    // this is outside the range for commands to the motor
-            .velocityFF(DriveConstants.kDrivingVelocityFeedForward);
-                // feedforward, you can ask me about this later im 
-                // honestly kinda confuzzled bc its actually way more important than i thought it was
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -77,7 +71,7 @@ public class DriveMotor {
     // SETTERS
 
     public void setLinearVelocity(LinearVelocity linearVel) {
-        SmartDashboard.putNumber(m_name + ": Linear Velocity", linearVel.in(Units.MetersPerSecond));
+        SmartDashboard.putNumber(m_name + ": Set Linear Velocity m/s", linearVel.in(Units.MetersPerSecond));
 
         m_closedLoop.setReference(linearVel.in(Units.MetersPerSecond), ControlType.kVelocity);
     }
