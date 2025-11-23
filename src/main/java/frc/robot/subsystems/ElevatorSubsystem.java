@@ -1,102 +1,124 @@
 package frc.robot.subsystems;
-
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.constants.ElevatorConstants;
-import frc.robot.constants.ElevatorConstants.ConversionFactor;
+import edu.wpi.first.units.measure.Velocity;
 
-/*
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import frc.robot.constants.DriveConstants;
+import frc.robot.constants.ElevatorConstants;
+
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+
+
 public class ElevatorSubsystem extends Subsystem {
     private final SparkMax m_elevatorMotorLeft;
-    private final SparkMax m_elevatorMotorRight; // Follows Left Motor
-
-    private final SparkClosedLoopController m_elevatorClosedLoop;
-
+    private final SparkMax m_elevatorMotorRight;
+    
     private final RelativeEncoder m_elevatorEncoderLeft;
+    private final RelativeEncoder m_elevatorEncoderRight;
 
-    private static ElevatorSubsystem m_instance;
-    public static ElevatorSubsystem getInstance() {
-        if (m_instance == null)
-            m_instance = new ElevatorSubsystem();
-        
-        return m_instance;
-    }
+    private final SparkClosedLoopController m_closedLoop;
 
     public ElevatorSubsystem() {
-        super();
 
         m_elevatorMotorLeft = new SparkMax(ElevatorConstants.CANIDs.kLeft, MotorType.kBrushless);
         m_elevatorMotorRight = new SparkMax(ElevatorConstants.CANIDs.kRight, MotorType.kBrushless);
 
-        m_elevatorClosedLoop = m_elevatorMotorLeft.getClosedLoopController();
-        
-        SparkMaxConfig m_elevatorMotorConfigLeft = new SparkMaxConfig();
-        SparkMaxConfig m_elevatorMotorConfigRight = new SparkMaxConfig();
-
         m_elevatorEncoderLeft = m_elevatorMotorLeft.getEncoder();
+        m_elevatorEncoderRight = m_elevatorMotorRight.getEncoder();
+        m_closedLoop = m_elevatorMotorLeft.getClosedLoopController();
 
-        m_elevatorMotorConfigLeft
-            .idleMode(IdleMode.kCoast)
+        SparkMaxConfig configurationLeft = new SparkMaxConfig();
+        SparkMaxConfig configurationRight = new SparkMaxConfig();
+
+        configurationLeft
+            .idleMode(IdleMode.kBrake)
             .smartCurrentLimit((int) ElevatorConstants.kCurrentLimit.in(Units.Amps));
-        m_elevatorMotorConfigLeft.encoder
-            .positionConversionFactor(ConversionFactor.kElevatorPositionConversion.in(Units.Meters))
-            .velocityConversionFactor(ConversionFactor.kElevatorVelocityConversion.in(Units.MetersPerSecond));
-        m_elevatorMotorConfigLeft.closedLoop
+        configurationLeft.encoder
+            .positionConversionFactor(1)
+            .velocityConversionFactor(1);
+        configurationLeft.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pidf(
-                ElevatorConstants.ClosedLoop.kP, 
-                ElevatorConstants.ClosedLoop.kI, 
-                ElevatorConstants.ClosedLoop.kD, 
-                ElevatorConstants.ClosedLoop.kFF
-            )
-            .outputRange(-1, 1);
+                ElevatorConstants.PID.kP,
+                ElevatorConstants.PID.kI,
+                ElevatorConstants.PID.kD,
+                ElevatorConstants.PID.kFF
+            );
+        
+        configurationRight.follow(ElevatorConstants.CANIDs.kLeft);
 
-        m_elevatorMotorConfigRight
-            .idleMode(IdleMode.kCoast)
-            .smartCurrentLimit((int) ElevatorConstants.kCurrentLimit.in(Units.Amps))
-            .follow(m_elevatorMotorLeft); // FOLLOWS LEFT MOTOR
-
-        m_elevatorMotorLeft.configure(m_elevatorMotorConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_elevatorMotorRight.configure(m_elevatorMotorConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_elevatorMotorLeft.configure(configurationLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_elevatorMotorRight.configure(configurationRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public void setPosition(Distance position) {
-        m_elevatorClosedLoop.setReference(position.in(Meters), ControlType.kPosition);
+    public Distance getHeight() {
+        return rotationsToHeight(m_elevatorEncoderLeft.getPosition());
     }
 
-    public Distance getPosition() {
-        return Meters.of(m_elevatorEncoderLeft.getPosition());
+    public Distance rotationsToHeight(Double r){
+        //Change into a normal unit conversion like you wanted to at the beginning of this train wreck
+        Distance rotationsToDistance = Units.Meters.of(
+            (ElevatorConstants.kMaxHeight.in(Units.Meters)/ElevatorConstants.kMaxRotations.in(Units.Rotations))
+            *r
+        );
+
+
+        // function for if it were a non-linear conversion:
+
+        // Distance rotationsToDistance = Units.Meters.of(
+        //     ((ElevatorConstants.kMaxHeight.in(Meters) - ElevatorConstants.kMinHeight.in(Meters))
+        //     /(ElevatorConstants.kMaxRotations.in(Units.Rotations) - ElevatorConstants.kMinRotations.in(Units.Rotations)))
+        //     *r
+
+        //     +(
+        //     ElevatorConstants.kMinHeight.in(Units.Meters)
+
+        //     -(ElevatorConstants.kMinRotations.in(Units.Rotations)
+
+        //     *(ElevatorConstants.kMaxHeight.in(Meters) - ElevatorConstants.kMinHeight.in(Meters))
+        //     /(ElevatorConstants.kMaxRotations.in(Units.Rotations) - ElevatorConstants.kMinRotations.in(Units.Rotations))))
+        // );
+
+        return rotationsToDistance;
     }
 
-    public LinearVelocity getVelocity() {
-        return MetersPerSecond.of(m_elevatorEncoderLeft.getVelocity());
+    public Rotation2d heightToRotations (Distance dist){
+        
+        Angle rots = Units.Rotations.of(
+            (ElevatorConstants.kMaxRotations.in(Units.Rotations)/ElevatorConstants.kMaxHeight.in(Units.Meters))
+            *dist.in(Units.Meters)
+        );
+
+        return Rotation2d.fromRadians(rots.in(Units.Radians));
     }
 
-    // OVERRIDES
-
-    // Logging
+    public LinearVelocity velocityCalculation(Distance pos0, Distance pos1, double time){
+        LinearVelocity v = Units.MetersPerSecond.of((pos0.in(Units.Meters) - pos1.in(Units.Meters))/time);
+        return v;
+    }
 
     protected void publishInit() {}
 
-    protected void publishPeriodic() {
-        SmartDashboard.putNumber("Elevator Position (m)", getPosition().in(Units.Meters));
-        SmartDashboard.putNumber("Elevator Velocity (mps)", getVelocity().in(Units.MetersPerSecond));
+    protected void publishPeriodic() {}
+
+    @Override
+    public void periodic() {
+
     }
 }
-    */
