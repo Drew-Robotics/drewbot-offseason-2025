@@ -12,11 +12,12 @@ public class PathPlannerConstants {
 
     public static final ModuleConfig kModuleConfig = new ModuleConfig(
         MeasureConstants.kSwerveMeasures.kWheelDiameter.div(2), 
-        Units.MetersPerSecond.of(5.65),
+        Units.MetersPerSecond.of(4.5),
         MeasureConstants.kSwerveMeasures.kCoefficientOfFriction, 
-        DriveConstants.kSwerveCalculations.kDriveMotor, 
+        DriveConstants.kSwerveCalculations.kDriveMotor,
+        kSwerveMeasures.kDrivingMotorReduction,
         kSwerveMeasures.kDrivingMotorCurrentLimit, 
-        kSwerveMeasures.kNumMotors
+        1
     );
 
     public static final RobotConfig kRobotConfig = new RobotConfig(
@@ -28,7 +29,7 @@ public class PathPlannerConstants {
 
     public final static class kPID {
         public final static class kTranslationPID {
-            public final static double kP = 10;
+            public final static double kP = 0;
             public final static double kI = 0;
             public final static double kD = 0;
 
@@ -38,7 +39,7 @@ public class PathPlannerConstants {
         }
 
         public final static class kRotationPID {
-            public static final double kP = 1;
+            public static final double kP = 0;
             public static final double kI = 0;
             public static final double kD = 0;
 
@@ -48,7 +49,7 @@ public class PathPlannerConstants {
         }
     }
 
-    public final static PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
+    public final static PPHolonomicDriveController kPathPlannerController = new PPHolonomicDriveController(
         kPID.kTranslationPID.pidConstants, kPID.kRotationPID.pidConstants
     );
 }

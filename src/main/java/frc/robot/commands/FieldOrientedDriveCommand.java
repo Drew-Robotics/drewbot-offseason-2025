@@ -4,58 +4,20 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.subsystems;
-import frc.robot.constants.DriveConstants;
 
-
-public class FieldOrientedDriveCommand extends Command {
-    private final DoubleSupplier m_xVel;
-    private final DoubleSupplier m_yVel;
-    private final DoubleSupplier m_rotVel;
-
-    public FieldOrientedDriveCommand(DoubleSupplier xVel, DoubleSupplier yVel, DoubleSupplier rotVel) {
-        m_xVel = xVel;
-        m_yVel = yVel;
-        m_rotVel = rotVel;
-
-        addRequirements(subsystems.driveSubsystem);
+public class FieldOrientedDriveCommand extends DriveCommand<Double, Double, Double> {
+    public FieldOrientedDriveCommand(Supplier<Double> xVelScalarSup, Supplier<Double> yVelScalarSup, Supplier<Double> rotVelScalarSup) {
+        super(xVelScalarSup, yVelScalarSup, rotVelScalarSup);
     }
 
-    private void fieldOrientedDrive() {
-        LinearVelocity xVel =  
-            DriveConstants.kMaxVels.kMaxDrive.times(
-                (DriveConstants.kXInverted ? -1.0 : 1.0) * m_xVel.getAsDouble()
-            );
-        LinearVelocity yVel = 
-            DriveConstants.kMaxVels.kMaxDrive.times(
-                (DriveConstants.kYInverted ? -1.0 : 1.0) * m_yVel.getAsDouble()
-            );
-        AngularVelocity rotVel = 
-            DriveConstants.kMaxVels.kMaxAngular.times(
-                m_rotVel.getAsDouble()
-            );
-
-        subsystems.driveSubsystem.fieldOrientedDrive(xVel, yVel, rotVel);
-    }
-
-    @Override
-    public void initialize() {}
-
-    @Override
-    public void execute() {
-        fieldOrientedDrive();
-    }
-
-    @Override
-    public void end(boolean interrupted) {}
-
-    @Override
-    public boolean isFinished() {
-      return false;
+    protected void driveFunction(Double xVelScalar, Double yVelScalar, Double rotVelScalar) {
+        subsystems.driveSubsystem.fieldOrientedDrive(
+            DriveCommand.mkXVel(xVelScalar), 
+            DriveCommand.mkYVel(yVelScalar),
+            DriveCommand.mkRotVel(rotVelScalar)
+        );
     }
 }

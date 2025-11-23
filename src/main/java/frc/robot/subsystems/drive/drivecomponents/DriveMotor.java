@@ -40,30 +40,19 @@ public class DriveMotor {
 
         configuration
             .idleMode(IdleMode.kBrake)
-                // Sets "idle" mode for motor, i.e. here it stops the motor from moving when its not doing anything
             .smartCurrentLimit((int) DriveConstants.kCurrentLimits.kDriveMotorCurrentLimit.in(Units.Amps));
-                // Just a current limit for the motor to make sure we dont explode the motor
         configuration.encoder
             .positionConversionFactor(DriveMotorConversions.kPositionConversionFactor.in(Units.Meters))
-                // sets the position conversion factor, 
-                // you don't need to check that its just conversions from gear ratios and radians to linear stuff 
             .velocityConversionFactor(DriveMotorConversions.kVelocityConversionFactor.in(Units.MetersPerSecond));
-                // same
         configuration.closedLoop
-            // PID
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                // Sets the encoder for this, depending on what kind of encoder it uses is important
-                // sometimes there will be an absolute encoder so change accordingly
             .pidf(
                 DriveMotorPID.kP, 
                 DriveMotorPID.kI, 
                 DriveMotorPID.kD,
                 DriveMotorPID.kFF
             )
-                // pid constants
             .outputRange(-1, 1);
-                // usu. -1 to 1, can be contrained more tightly
-                // unless you know what you are doing dont go less than -1 or greater than 1
         
         m_motorController.configure(configuration, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -83,6 +72,8 @@ public class DriveMotor {
     }
 
     public Distance getDistance() {
+        SmartDashboard.putNumber(m_name + ": Distance m", m_encoder.getPosition());
+
         return Units.Meters.of(m_encoder.getPosition());
     }
 }

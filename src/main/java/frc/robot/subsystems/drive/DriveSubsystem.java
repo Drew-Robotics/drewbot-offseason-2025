@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -43,6 +44,8 @@ public class DriveSubsystem extends Subsystem {
     private final SwerveDrivePoseEstimator m_poseEstimator;
 
     private final ProfiledPIDController m_rotationPID;
+
+    private StructPublisher<Pose2d> m_robotPosePublisher = m_table.getStructTopic("RobotPose", Pose2d.struct).publish();
 
     private static DriveSubsystem m_instance;
     public static DriveSubsystem getInstance() {
@@ -105,16 +108,8 @@ public class DriveSubsystem extends Subsystem {
         m_rotationPID.enableContinuousInput(Math.PI * -1, Math.PI);
     }
 
+
     // PRIVATE METHODS
-
-    private SwerveModulePosition[] getModulePositions() {
-        return Arrays.stream(m_swerveModules).map(module -> module.getModulePosition()).toArray(SwerveModulePosition[]::new);
-    }
-
-    private SwerveModuleState[] getModuleStates() {
-        return Arrays.stream(m_swerveModules).map(module -> module.getModuleState()).toArray(SwerveModuleState[]::new);
-    }
-
 
     /**
      * Robot Relative ChassisSpeeds
@@ -176,6 +171,20 @@ public class DriveSubsystem extends Subsystem {
         );
     }
 
+    // PUBLIC METHODS
+
+    public Pose2d getPose() {
+        return m_poseEstimator.getEstimatedPosition();
+    }
+
+    public SwerveModulePosition[] getModulePositions() {
+        return Arrays.stream(m_swerveModules).map(module -> module.getModulePosition()).toArray(SwerveModulePosition[]::new);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return Arrays.stream(m_swerveModules).map(module -> module.getModuleState()).toArray(SwerveModuleState[]::new);
+    }
+
     public void resetYaw() {
         m_gyro.resetYaw();
     }
@@ -186,11 +195,7 @@ public class DriveSubsystem extends Subsystem {
      * Resets the pose of the robot to the selected pose
      */
     private void resetPose(Pose2d pose) {
-        m_poseEstimator.resetPose(pose);
-    }
-
-    public Pose2d getPose() {
-        return m_poseEstimator.getEstimatedPosition();
+        m_poseEstimator.resetPosition(m_gyro.getYaw(), getModulePositions(), pose);
     }
 
     /**
@@ -208,7 +213,7 @@ public class DriveSubsystem extends Subsystem {
             this::resetPose, 
             this::getChassisSpeeds, 
             (speeds, _ignore) -> setChassisSpeeds(speeds), 
-            PathPlannerConstants.kDriveController, 
+            PathPlannerConstants.kPathPlannerController, 
             PathPlannerConstants.kRobotConfig,
             isRedSupplier, 
             this
@@ -231,5 +236,7 @@ public class DriveSubsystem extends Subsystem {
     protected void publishPeriodic() {
         SmartDashboard.putNumber("Gyroscope Yaw", m_gyro.getYaw().getRadians());
         SmartDashboard.putNumber("Gyroscope Yaw Degrees", m_gyro.getYaw().getDegrees());
+
+        m_robotPosePublisher.accept(getPose());
     }
 }

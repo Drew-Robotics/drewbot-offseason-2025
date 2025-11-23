@@ -6,6 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 
 public class SwerveModule {
+    @SuppressWarnings("unused")
     private final String m_name;
 
     private final DriveMotor m_driveMotor;
@@ -22,34 +23,46 @@ public class SwerveModule {
         m_angularOffset = angularOffset;
     }
 
-    public void setState(SwerveModuleState robotRelativeState) {
-        setRobotRelativeState(
-            toModuleRelativeState(robotRelativeState)
+
+    /**
+     * @param moduleState robot relative module state
+     */
+    public void setState(SwerveModuleState moduleState) {
+        SwerveModuleState moduleRelativeState = new SwerveModuleState(
+            moduleState.speedMetersPerSecond,
+            toModuleRelativeAngle(moduleState.angle)
+        );
+
+        moduleRelativeState.optimize(m_turnMotor.getAngle());
+
+        m_turnMotor.setAngle(moduleRelativeState.angle);
+
+        m_driveMotor.setLinearVelocity(
+            Units.MetersPerSecond.of(moduleRelativeState.speedMetersPerSecond)
         );
     }
 
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(m_driveMotor.getDistance(), m_turnMotor.getAngle());
+        return new SwerveModulePosition(m_driveMotor.getDistance(), toRobotRelativeAngle(m_turnMotor.getAngle()));
     }
 
     public SwerveModuleState getModuleState() {
-        return new SwerveModuleState(m_driveMotor.getLinearVelocity(), m_turnMotor.getAngle());
+        return new SwerveModuleState(m_driveMotor.getLinearVelocity(), toRobotRelativeAngle(m_turnMotor.getAngle()));
     }
 
-    private SwerveModuleState toModuleRelativeState(SwerveModuleState moduleState) {
-        return new SwerveModuleState(
-            moduleState.speedMetersPerSecond,
-            moduleState.angle.plus(m_angularOffset)
-        );
+    /**
+     * @param moduleState robot relative module angle
+     * @return module relative angle
+     */
+    private Rotation2d toModuleRelativeAngle(Rotation2d angle) {
+        return angle.plus(m_angularOffset);
     }
 
-    private void setRobotRelativeState(SwerveModuleState moduleState) {
-        moduleState.optimize(m_turnMotor.getAngle());
-
-        m_turnMotor.setAngle(moduleState.angle);
-
-        m_driveMotor.setLinearVelocity(
-            Units.MetersPerSecond.of(moduleState.speedMetersPerSecond)
-        );
+    /**
+     * @param moduleState module relative angle
+     * @return robot relative angle
+     */
+    private Rotation2d toRobotRelativeAngle(Rotation2d angle) {
+        return angle.minus(m_angularOffset);
     }
 }

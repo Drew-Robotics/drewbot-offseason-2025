@@ -37,17 +37,6 @@ public class DriveConstants {
         }
     }
 
-    public static final class kWheelOffsetConstants {
-        public static final Translation2d kFrontLeftOffset = 
-            new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kTrackWidth.div(2));
-        public static final Translation2d kFrontRightOffset =
-            new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kTrackWidth.div(2).negate());
-        public static final Translation2d kBackLeftOffset = 
-            new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kTrackWidth.div(2));
-        public static final Translation2d kBackRightOffset =
-            new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kTrackWidth.div(2).negate());
-    }
-
     public static final class kCurrentLimits {
         public static final Current kDriveMotorCurrentLimit = Units.Amps.of(40);
         public static final Current kTurnMotorCurrentLimit = Units.Amps.of(20);
@@ -79,7 +68,7 @@ public class DriveConstants {
 
     public static final class kPID {
         public static final class DriveMotorPID {
-            public static final double kP = 0.001;
+            public static final double kP = 0.0025;
             public static final double kI = 0;
             public static final double kD = 0;
             public static final double kFF = 1 / kSwerveCalculations.kDriveWheelFreeSpeed.in(Units.MetersPerSecond);
@@ -116,7 +105,7 @@ public class DriveConstants {
     }
 
     public static final class kMaxVels {
-        private static final boolean kLimitSpeed = false;
+        private static final boolean kLimitSpeed = true;
 
         public static final LinearVelocity kMaxDrive = Units.MetersPerSecond.of(3).div(kLimitSpeed ? 2 : 1);
         public static final AngularVelocity kMaxAngular = Units.RadiansPerSecond.of(2 * Math.PI).div(kLimitSpeed ? 2 : 1);
@@ -129,9 +118,9 @@ public class DriveConstants {
     public static final boolean kYInverted = true;
 
     public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
-        kWheelOffsetConstants.kFrontLeftOffset,
-        kWheelOffsetConstants.kFrontRightOffset,
-        kWheelOffsetConstants.kBackLeftOffset,
-        kWheelOffsetConstants.kBackRightOffset
+        new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kWheelBase.div(2)),
+        new Translation2d(kBodyMeasures.kWheelBase.div(2), kBodyMeasures.kWheelBase.div(2).negate()),
+        new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kWheelBase.div(2)),
+        new Translation2d(kBodyMeasures.kWheelBase.div(2).negate(), kBodyMeasures.kWheelBase.div(2).negate())
     );
 }

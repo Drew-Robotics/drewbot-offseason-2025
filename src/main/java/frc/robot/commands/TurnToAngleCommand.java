@@ -1,55 +1,27 @@
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.subsystems;
-import frc.robot.constants.DriveConstants;
 
-public class TurnToAngleCommand extends Command {
-    private final Rotation2d m_setAngle;
-
-    private final DoubleSupplier m_xVel;
-    private final DoubleSupplier m_yVel;
-
-
-    public TurnToAngleCommand(DoubleSupplier xVel, DoubleSupplier yVel, Rotation2d rot) {
-        m_setAngle = rot;
-
-        m_xVel = xVel;
-        m_yVel = yVel;
-
-        addRequirements(subsystems.driveSubsystem);
+public class TurnToAngleCommand extends DriveCommand<Double, Double, Rotation2d> {
+    public TurnToAngleCommand(Supplier<Double> xVelScalarSup, Supplier<Double> yVelScalarSup, Supplier<Rotation2d> setAngleSup) {
+        super(xVelScalarSup, yVelScalarSup, setAngleSup);
     }
 
-    @Override
-    public void initialize() {}
-
-    @Override
-    public void execute() {
-        LinearVelocity xVel =  
-            DriveConstants.kMaxVels.kMaxDrive.times(
-                (DriveConstants.kXInverted ? -1.0 : 1.0) * m_xVel.getAsDouble()
-            );
-        LinearVelocity yVel = 
-            DriveConstants.kMaxVels.kMaxDrive.times(
-                (DriveConstants.kYInverted ? -1.0 : 1.0) * m_yVel.getAsDouble()
-            );
-
+    protected void driveFunction(Double xVelScalar, Double yVelScalar, Rotation2d setAngle) {
         subsystems.driveSubsystem.turnToAngleDrive(
-            xVel,
-            yVel,
-            m_setAngle
+            DriveCommand.mkXVel(xVelScalar),
+            DriveCommand.mkYVel(yVelScalar),
+            setAngle
         );
     }
 
-    @Override
-    public void end(boolean interrupted) {}
+    // TODO: implement
+    /* 
+    public static alignToAprilTag() {
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+    } 
+    */
 }

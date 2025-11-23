@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -53,7 +55,7 @@ public class RobotContainer {
             new TurnToAngleCommand(
                 m_driverController::getDriveX,
                 m_driverController::getDriveY,
-                Rotation2d.fromRadians(0)
+                () -> Rotation2d.kZero
             )
         );
     }
