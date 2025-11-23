@@ -9,7 +9,7 @@ import frc.robot.RobotContainer.subsystems;
 import frc.robot.constants.DriveConstants;
 
 /** 
- * A command that depends on the driveSubsystem and manages an X value, Y value, and a Rotation value
+ * A command that depends on the driveSubsystem and processes X values, Y values, and a Rotation values
  */
 public abstract class DriveCommand<X, Y, R> extends Command {
     protected final Supplier<X> m_x;
